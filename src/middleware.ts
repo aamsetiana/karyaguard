@@ -6,6 +6,7 @@ import {
   verifyClearanceToken,
   isMaliciousBot,
 } from "@/lib/anti-ddos";
+import { validateOriginAndCSRF } from "@/lib/csrf";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "karyaguard_super_secret_jwt_encryption_key_2026_xyz"
@@ -35,7 +36,16 @@ export async function middleware(request: NextRequest) {
     );
   }
 
-  // 3. Ekstraksi IP Client & Validasi Clearance Token (Zero-Trust Traffic Gate)
+  // 3. Validasi Anti-CSRF & Origin Guard untuk Request Mutasi
+  const csrfCheck = validateOriginAndCSRF(request);
+  if (!csrfCheck.valid) {
+    return NextResponse.json(
+      { success: false, error: csrfCheck.error },
+      { status: 403 }
+    );
+  }
+
+  // 4. Ekstraksi IP Client & Validasi Clearance Token (Zero-Trust Traffic Gate)
   const clientIp =
     request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
     request.headers.get("x-real-ip") ||

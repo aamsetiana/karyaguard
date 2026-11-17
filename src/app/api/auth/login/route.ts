@@ -54,7 +54,13 @@ export async function POST(request: Request) {
       include: { department: true, office: true, shift: true },
     });
 
+    // Hash tiruan untuk mencegah serangan Timing Side-Channel (Username Enumeration)
+    const DUMMY_HASH = "$2a$12$e8uqgMc4G8w22U8Wom55C.j7iM6Z46N43eW9Kk8gY7O4t2gC3a0d.";
+
     if (!user || !user.isActive) {
+      // Jalankan verifikasi tiruan agar latensi respons konstan (~120ms)
+      await verifyPassword(password, DUMMY_HASH);
+
       await createAuditLog({
         action: "AUTH_LOGIN_FAILED_UNKNOWN_USER",
         ipAddress: ip,

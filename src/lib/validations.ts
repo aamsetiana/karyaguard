@@ -1,6 +1,25 @@
 import { z } from "zod";
 
 /**
+ * Sanitasi mendalam untuk menangkal XSS, Null-Byte Injection, dan Prototype Pollution
+ */
+export function sanitizeInput(input: string): string {
+  if (typeof input !== "string") return input;
+
+  return input
+    .replace(/\0/g, "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;")
+    .replace(/\//g, "&#x2F;")
+    .replace(/__proto__/gi, "")
+    .replace(/constructor/gi, "")
+    .trim();
+}
+
+/**
  * Validasi Skema Login
  */
 export const loginSchema = z.object({
@@ -57,7 +76,7 @@ export const checkInSchema = z.object({
   longitude: z.number().min(-180).max(180),
   accuracy: z.number().min(0).max(50000),
   photo: z.string().min(1, { message: "Foto selfie wajib dilampirkan" }),
-  notes: z.string().trim().max(255).optional(),
+  notes: z.string().trim().max(255).transform(sanitizeInput).optional(),
 });
 
 /**
@@ -71,7 +90,8 @@ export const leaveRequestSchema = z.object({
     .string()
     .trim()
     .min(5, { message: "Alasan cuti minimal 5 karakter" })
-    .max(500, { message: "Alasan cuti maksimal 500 karakter" }),
+    .max(500, { message: "Alasan cuti maksimal 500 karakter" })
+    .transform(sanitizeInput),
   attachmentUrl: z.string().optional().nullable(),
 });
 
