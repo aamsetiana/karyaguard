@@ -23,6 +23,7 @@ import {
   ChevronUp,
   LocateFixed,
   Compass,
+  Upload,
   Info,
 } from "lucide-react";
 
@@ -57,6 +58,8 @@ export default function AttendancePage() {
   // Camera state
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
 
@@ -89,6 +92,10 @@ export default function AttendancePage() {
 
     return () => {
       stopRealtimeGPS();
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
     };
   }, []);
 
@@ -335,24 +342,66 @@ export default function AttendancePage() {
   };
 
   // ---------------------------------------------------------------------------
-  // Kamera Swafoto (WebRTC & Fallback)
+  // Kamera Swafoto (WebRTC, Fallback Desktop & Upload)
   // ---------------------------------------------------------------------------
   const startCamera = async () => {
     setPhoto(null);
+    setMessage(null);
+
+    // Hentikan stream yang sedang berjalan jika ada
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
-      });
+      if (typeof navigator === "undefined" || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("Browser ini tidak mendukung akses kamera langsung (getUserMedia).");
+      }
+
+      let stream: MediaStream | null = null;
+      try {
+        // Coba kamera depan (user)
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
+          audio: false,
+        });
+      } catch (errUser) {
+        // Fallback untuk webcam laptop / PC desktop tanpa atribut facingMode
+        console.warn("Fallback to basic video constraint:", errUser);
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        });
+      }
+
+      streamRef.current = stream;
+      setCameraActive(true);
+
+      // Kaitkan stream ke elemen video yang sudah ter-mount di DOM
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
-        setCameraActive(true);
+        try {
+          await videoRef.current.play();
+        } catch (playErr) {
+          console.warn("Video play error:", playErr);
+        }
       }
     } catch (err: any) {
-      setMessage({
-        type: "error",
-        text: `Kamera tidak dapat diakses (${err.message}). Anda dapat menggunakan tombol 'Gunakan Foto Verifikasi Otomatis' di bawah.`,
-      });
+      console.error("Camera access error:", err);
+      let errMsg = "Kamera tidak dapat diakses.";
+      if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+        errMsg = "Izin kamera ditolak di browser. Silakan klik ikon gembok / kamera di sebelah URL address bar dan pilih 'Allow / Izinkan', lalu muat ulang kamera.";
+      } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+        errMsg = "Perangkat kamera / webcam tidak terdeteksi pada komputer Anda. Anda dapat menggunakan opsi 'Gunakan Foto Otomatis' atau 'Unggah Foto'.";
+      } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+        errMsg = "Kamera sedang dipakai oleh aplikasi lain (seperti Zoom, Teams, Google Meet, OBS, atau Discord). Tutup aplikasi tersebut atau gunakan opsi 'Foto Otomatis'.";
+      } else {
+        errMsg = `Gagal mengaktifkan kamera: ${err.message}`;
+      }
+
+      setMessage({ type: "error", text: errMsg });
+      setCameraActive(false);
     }
   };
 
@@ -360,20 +409,40 @@ export default function AttendancePage() {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      canvas.width = video.videoWidth || 640;
-      canvas.height = video.videoHeight || 480;
+      const width = video.videoWidth || 640;
+      const height = video.videoHeight || 480;
+      canvas.width = width;
+      canvas.height = height;
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
+        ctx.drawImage(video, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
         setPhoto(dataUrl);
 
-        const stream = video.srcObject as MediaStream;
-        if (stream) {
-          stream.getTracks().forEach((track) => track.stop());
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach((track) => track.stop());
+          streamRef.current = null;
         }
         setCameraActive(false);
+        setMessage({ type: "success", text: "Swafoto biometrik berhasil ditangkap." });
       }
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhoto(reader.result as string);
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach((track) => track.stop());
+          streamRef.current = null;
+        }
+        setCameraActive(false);
+        setMessage({ type: "success", text: "Foto swafoto berhasil dimuat dari file." });
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -395,7 +464,7 @@ export default function AttendancePage() {
       setPhoto(canvas.toDataURL("image/jpeg", 0.8));
       setMessage({
         type: "success",
-        text: "Swafoto pengujian terverifikasi berhasil disiapkan.",
+        text: "Swafoto verifikasi otomatis berhasil disiapkan.",
       });
     }
   };
@@ -764,53 +833,119 @@ export default function AttendancePage() {
             </div>
 
             <div className="relative aspect-video bg-black/50 rounded-xl overflow-hidden border border-white/[0.08] flex items-center justify-center">
-              {photo ? (
+              {/* Elemen Video selalu ter-mount di DOM agar videoRef tidak pernah null */}
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className={`w-full h-full object-cover ${cameraActive && !photo ? "block" : "hidden"}`}
+              />
+
+              {/* Tampilan Hasil Foto */}
+              {photo && (
                 <img src={photo} alt="Swafoto" className="w-full h-full object-cover" />
-              ) : cameraActive ? (
-                <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
-              ) : (
-                <div className="text-center p-6 text-slate-500 space-y-2">
-                  <Camera className="w-8 h-8 mx-auto opacity-40 text-slate-400" />
-                  <p className="text-xs">Kamera belum diaktifkan</p>
+              )}
+
+              {/* Placeholder saat kamera belum menyala */}
+              {!cameraActive && !photo && (
+                <div className="text-center p-6 text-slate-500 space-y-2.5">
+                  <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mx-auto text-emerald-400">
+                    <Camera className="w-6 h-6 opacity-75" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-300">Kamera Belum Aktif</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Klik "Nyalakan Kamera" untuk membuka webcam perangkat
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
 
             <canvas ref={canvasRef} className="hidden" />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="user"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
 
             <div className="space-y-2">
-              <div className="flex gap-2">
+              <div className="flex flex-wrap sm:flex-nowrap gap-2">
                 {!cameraActive && !photo && (
-                  <button
-                    type="button"
-                    onClick={startCamera}
-                    className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition"
-                  >
-                    <Camera className="w-4 h-4" />
-                    <span>Nyalakan Kamera</span>
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={startCamera}
+                      className="flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition"
+                    >
+                      <Camera className="w-4 h-4" />
+                      <span>Nyalakan Kamera</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="py-2.5 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.08] text-xs font-medium rounded-xl flex items-center justify-center gap-1.5 transition"
+                      title="Unggah Foto dari Perangkat"
+                    >
+                      <Upload className="w-3.5 h-3.5 text-sky-400" />
+                      <span className="hidden sm:inline">Unggah</span>
+                    </button>
+                  </>
                 )}
 
                 {cameraActive && (
-                  <button
-                    type="button"
-                    onClick={capturePhoto}
-                    className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition"
-                  >
-                    <Camera className="w-4 h-4" />
-                    <span>Ambil Foto</span>
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={capturePhoto}
+                      className="flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition"
+                    >
+                      <Camera className="w-4 h-4" />
+                      <span>Ambil Foto</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (streamRef.current) {
+                          streamRef.current.getTracks().forEach((track) => track.stop());
+                          streamRef.current = null;
+                        }
+                        setCameraActive(false);
+                      }}
+                      className="py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.08] text-xs rounded-xl transition"
+                    >
+                      <span>Batal</span>
+                    </button>
+                  </>
                 )}
 
                 {photo && !checkedInToday && (
-                  <button
-                    type="button"
-                    onClick={startCamera}
-                    className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 text-xs rounded-xl border border-white/[0.08] flex items-center justify-center gap-2 transition"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                    <span>Ambil Ulang</span>
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={startCamera}
+                      className="flex-1 py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 text-xs rounded-xl border border-white/[0.08] flex items-center justify-center gap-2 transition"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Nyalakan Ulang Kamera</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="py-2.5 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.08] text-xs font-medium rounded-xl flex items-center justify-center gap-1.5 transition"
+                      title="Ganti dengan Unggah File"
+                    >
+                      <Upload className="w-3.5 h-3.5 text-sky-400" />
+                      <span className="hidden sm:inline">Pilih File</span>
+                    </button>
+                  </>
                 )}
               </div>
 
