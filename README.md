@@ -92,7 +92,7 @@ PAYROLL_HASH_SALT="secret_salt_for_payroll_integrity_hash_verification"
 
 1. **Clone repositori**:
    ```bash
-   git clone https://github.com/username/karyaguard.git
+   git clone https://github.com/aamsetiana/karyaguard.git
    cd karyaguard
    ```
 2. **Install dependensi**:
@@ -142,7 +142,7 @@ Untuk keperluan pengujian dosen dan evaluasi fungsional:
 ## 7. URL Aplikasi & Repositori
 
 * **URL Aplikasi Aktif (Vercel)**: `https://karyaguard.vercel.app` *(Akan diperbarui saat deploy)*
-* **URL Repositori Git**: `https://github.com/username/karyaguard` *(Akan diperbarui)*
+* **URL Repositori Git**: `https://github.com/aamsetiana/karyaguard`
 
 ---
 
