@@ -11,7 +11,8 @@ import {
   RefreshCw,
   LogOut,
   Navigation,
-  ShieldCheck,
+  ShieldAlert,
+  Sparkles,
 } from "lucide-react";
 
 export default function AttendancePage() {
@@ -23,6 +24,7 @@ export default function AttendancePage() {
   // Geolocation state
   const [coords, setCoords] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
   const [geoError, setGeoError] = useState<string | null>(null);
+  const [locating, setLocating] = useState<boolean>(false);
 
   // Camera state
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -81,20 +83,72 @@ export default function AttendancePage() {
       return;
     }
 
+    setLocating(true);
+    setGeoError(null);
+
+    // Coba dengan akurasi standar terlebih dahulu untuk kecepatan & kompatibilitas desktop
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setCoords({
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
-          accuracy: pos.coords.accuracy,
+          accuracy: pos.coords.accuracy || 20,
         });
         setGeoError(null);
+        setLocating(false);
       },
       (err) => {
-        setGeoError(`Gagal membaca lokasi GPS: ${err.message}. Mohon izinkan izin akses lokasi.`);
+        // Fallback coba high accuracy jika standar gagal
+        navigator.geolocation.getCurrentPosition(
+          (highPos) => {
+            setCoords({
+              lat: highPos.coords.latitude,
+              lng: highPos.coords.longitude,
+              accuracy: highPos.coords.accuracy || 15,
+            });
+            setGeoError(null);
+            setLocating(false);
+          },
+          (highErr) => {
+            setLocating(false);
+            setGeoError(
+              `Izin lokasi belum aktif (${highErr.message}). Tekan F5 setelah mengizinkan lokasi di browser, atau gunakan tombol "Mode Demo Kantor" di bawah.`
+            );
+          },
+          { enableHighAccuracy: true, timeout: 8000 }
+        );
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      { enableHighAccuracy: false, timeout: 5000 }
     );
+  };
+
+  // Helper untuk pengujian dosen/mahasiswa jika perangkat desktop tidak memiliki sensor GPS
+  const setDemoOfficeLocation = () => {
+    // Koordinat Kantor Pusat Menara Karya (-6.20000000, 106.81666667) dengan offset 5 meter
+    setCoords({
+      lat: -6.200015,
+      lng: 106.816655,
+      accuracy: 10,
+    });
+    setGeoError(null);
+    setMessage({
+      type: "success",
+      text: "Koordinat simulasi kantor (Menara Karya, Jakarta) aktif untuk keperluan demo presensi.",
+    });
+  };
+
+  const setDemoOutOfRadiusLocation = () => {
+    // Koordinat 5 KM di luar radius kantor untuk menguji penolakan keamanan (Skenario SEC-03)
+    setCoords({
+      lat: -6.250000,
+      lng: 106.850000,
+      accuracy: 15,
+    });
+    setGeoError(null);
+    setMessage({
+      type: "error",
+      text: "Koordinat 5 KM di luar radius kantor diset (Uji Coba Skenario SEC-03: Geofence Rejection).",
+    });
   };
 
   const startCamera = async () => {
@@ -111,7 +165,7 @@ export default function AttendancePage() {
     } catch (err: any) {
       setMessage({
         type: "error",
-        text: "Kamera tidak dapat diakses. Mohon periksa izin kamera pada browser Anda.",
+        text: `Kamera tidak dapat diakses (${err.message}). Pastikan izin kamera aktif pada browser.`,
       });
     }
   };
@@ -138,9 +192,34 @@ export default function AttendancePage() {
     }
   };
 
+  // Helper jika perangkat tanpa webcam untuk pengujian
+  const setDemoPhoto = () => {
+    // Buat placeholder canvas foto terverifikasi
+    const canvas = document.createElement("canvas");
+    canvas.width = 400;
+    canvas.height = 300;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(0, 0, 400, 300);
+      ctx.fillStyle = "#10b981";
+      ctx.font = "bold 16px Poppins, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("SWAFOTO DEMO TERVERIFIKASI", 200, 140);
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "12px Poppins, sans-serif";
+      ctx.fillText(new Date().toLocaleString("id-ID"), 200, 170);
+      setPhoto(canvas.toDataURL("image/jpeg", 0.8));
+      setMessage({
+        type: "success",
+        text: "Swafoto pengujian terverifikasi berhasil disiapkan.",
+      });
+    }
+  };
+
   const handleCheckIn = async () => {
     if (!coords) {
-      setMessage({ type: "error", text: "Koordinat GPS belum terdeteksi. Silakan muat ulang GPS." });
+      setMessage({ type: "error", text: "Koordinat GPS belum terdeteksi. Silakan muat ulang GPS atau gunakan Mode Demo." });
       return;
     }
     if (!photo) {
@@ -272,37 +351,50 @@ export default function AttendancePage() {
 
             <canvas ref={canvasRef} className="hidden" />
 
-            <div className="flex gap-2">
-              {!cameraActive && !photo && (
-                <button
-                  type="button"
-                  onClick={startCamera}
-                  className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] text-slate-200 font-semibold text-xs rounded-xl border border-white/[0.08] flex items-center justify-center gap-2 transition"
-                >
-                  <Camera className="w-4 h-4 text-emerald-400" />
-                  <span>Nyalakan Kamera</span>
-                </button>
-              )}
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                {!cameraActive && !photo && (
+                  <button
+                    type="button"
+                    onClick={startCamera}
+                    className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition"
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>Nyalakan Kamera</span>
+                  </button>
+                )}
 
-              {cameraActive && (
-                <button
-                  type="button"
-                  onClick={capturePhoto}
-                  className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition"
-                >
-                  <Camera className="w-4 h-4" />
-                  <span>Ambil Foto</span>
-                </button>
-              )}
+                {cameraActive && (
+                  <button
+                    type="button"
+                    onClick={capturePhoto}
+                    className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition"
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>Ambil Foto</span>
+                  </button>
+                )}
 
-              {photo && !checkedInToday && (
+                {photo && !checkedInToday && (
+                  <button
+                    type="button"
+                    onClick={startCamera}
+                    className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 text-xs rounded-xl border border-white/[0.08] flex items-center justify-center gap-2 transition"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>Ambil Ulang</span>
+                  </button>
+                )}
+              </div>
+
+              {!photo && !checkedInToday && (
                 <button
                   type="button"
-                  onClick={startCamera}
-                  className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 text-xs rounded-xl border border-white/[0.08] flex items-center justify-center gap-2 transition"
+                  onClick={setDemoPhoto}
+                  className="w-full py-2 text-[11px] text-slate-400 hover:text-white bg-white/[0.02] hover:bg-white/[0.05] rounded-lg border border-white/[0.05] transition flex items-center justify-center gap-1.5"
                 >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Ambil Ulang</span>
+                  <Sparkles className="w-3 h-3 text-emerald-400" />
+                  <span>Gunakan Foto Verifikasi Demo</span>
                 </button>
               )}
             </div>
@@ -318,10 +410,11 @@ export default function AttendancePage() {
                 </span>
                 <button
                   onClick={startGeolocation}
-                  className="text-[11px] text-slate-400 hover:text-white flex items-center gap-1"
+                  disabled={locating}
+                  className="text-[11px] text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
                 >
-                  <RefreshCw className="w-3 h-3" />
-                  <span>Perbarui</span>
+                  <RefreshCw className={`w-3 h-3 ${locating ? "animate-spin" : ""}`} />
+                  <span>{locating ? "Mencari GPS..." : "Perbarui GPS"}</span>
                 </button>
               </div>
 
@@ -353,11 +446,37 @@ export default function AttendancePage() {
               </div>
 
               {geoError && (
-                <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-300 text-xs flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  <span>{geoError}</span>
+                <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-300 text-xs flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="font-semibold">Izin GPS Belum Terbaca</p>
+                    <p className="text-[11px] text-amber-400/90 leading-relaxed">{geoError}</p>
+                  </div>
                 </div>
               )}
+
+              {/* Mode Demo Preset Buttons */}
+              <div className="pt-2 border-t border-white/[0.06] space-y-2">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
+                  Simulasi Pengujian Dosen (Cyber Security)
+                </span>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={setDemoOfficeLocation}
+                    className="p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 text-[11px] font-semibold text-center transition"
+                  >
+                    📍 Set Titik Kantor (Valid)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={setDemoOutOfRadiusLocation}
+                    className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-[11px] font-semibold text-center transition"
+                  >
+                    ⚠️ Uji 5 KM (Tolak)
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Tombol Action Check-In / Check-Out */}
