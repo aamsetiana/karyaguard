@@ -124,30 +124,30 @@ export default function AttendancePage() {
 
   // Helper untuk pengujian dosen/mahasiswa jika perangkat desktop tidak memiliki sensor GPS
   const setDemoOfficeLocation = () => {
-    // Koordinat Kantor Pusat Menara Karya (-6.20000000, 106.81666667) dengan offset 5 meter
+    // Koordinat Kampus 2 Universitas Kuningan (FKOM UNIKU)
     setCoords({
-      lat: -6.200015,
-      lng: 106.816655,
+      lat: -6.9756855,
+      lng: 108.4774808,
       accuracy: 10,
     });
     setGeoError(null);
     setMessage({
       type: "success",
-      text: "Koordinat simulasi kantor (Menara Karya, Jakarta) aktif untuk keperluan demo presensi.",
+      text: "Koordinat Kampus 2 Universitas Kuningan (FKOM UNIKU) aktif untuk keperluan presensi.",
     });
   };
 
   const setDemoOutOfRadiusLocation = () => {
-    // Koordinat 5 KM di luar radius kantor untuk menguji penolakan keamanan (Skenario SEC-03)
+    // Koordinat ~6 KM di luar radius Kampus 2 UNIKU untuk menguji penolakan keamanan (Skenario SEC-03)
     setCoords({
-      lat: -6.250000,
-      lng: 106.850000,
+      lat: -6.920000,
+      lng: 108.477480,
       accuracy: 15,
     });
     setGeoError(null);
     setMessage({
       type: "error",
-      text: "Koordinat 5 KM di luar radius kantor diset (Uji Coba Skenario SEC-03: Geofence Rejection).",
+      text: "Koordinat 6 KM di luar Kampus 2 UNIKU diset (Uji Coba Skenario SEC-03: Geofence Rejection).",
     });
   };
 
@@ -421,7 +421,7 @@ export default function AttendancePage() {
               <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] p-4 space-y-2.5 text-xs">
                 <div className="flex justify-between items-center">
                   <span className="text-slate-400">Kantor Terdaftar:</span>
-                  <span className="text-white font-semibold">{user?.office?.name || "Menara Karya Jakarta"}</span>
+                  <span className="text-white font-semibold">{user?.office?.name || "Kampus 2 Universitas Kuningan"}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-400">Batas Toleransi:</span>
@@ -466,14 +466,14 @@ export default function AttendancePage() {
                     onClick={setDemoOfficeLocation}
                     className="p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 text-[11px] font-semibold text-center transition"
                   >
-                    📍 Set Titik Kantor (Valid)
+                    📍 Set Kampus 2 UNIKU (Valid)
                   </button>
                   <button
                     type="button"
                     onClick={setDemoOutOfRadiusLocation}
                     className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-[11px] font-semibold text-center transition"
                   >
-                    ⚠️ Uji 5 KM (Tolak)
+                    ⚠️ Uji 6 KM (Tolak)
                   </button>
                 </div>
               </div>

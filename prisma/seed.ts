@@ -7,17 +7,35 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Memulai seeding database KaryaGuard...");
 
-  // 1. Buat Kantor & Geofence
+  // 1. Buat Kantor & Geofence (Kampus 2 Universitas Kuningan)
   const office = await prisma.office.upsert({
-    where: { id: "office_jkt_central" },
-    update: {},
+    where: { id: "office_uniku_kampus2" },
+    update: {
+      name: "Kampus 2 Universitas Kuningan (FKOM UNIKU)",
+      latitude: -6.97568550,
+      longitude: 108.47748080,
+      radiusMeters: 150,
+      address: "Jl. Pramuka No. 67, Purwawinangun, Kec. Kuningan, Kab. Kuningan, Jawa Barat 45512",
+    },
     create: {
-      id: "office_jkt_central",
-      name: "Kantor Pusat Jakarta (Menara Karya)",
-      latitude: -6.20000000,
-      longitude: 106.81666667,
-      radiusMeters: 100,
-      address: "Jl. H.R. Rasuna Said Kav. 1-2, Setiabudi, Jakarta Selatan",
+      id: "office_uniku_kampus2",
+      name: "Kampus 2 Universitas Kuningan (FKOM UNIKU)",
+      latitude: -6.97568550,
+      longitude: 108.47748080,
+      radiusMeters: 150,
+      address: "Jl. Pramuka No. 67, Purwawinangun, Kec. Kuningan, Kab. Kuningan, Jawa Barat 45512",
+    },
+  });
+
+  // Hapus / update kantor lama jika ada
+  await prisma.office.updateMany({
+    where: { id: "office_jkt_central" },
+    data: {
+      name: "Kampus 2 Universitas Kuningan (FKOM UNIKU)",
+      latitude: -6.97568550,
+      longitude: 108.47748080,
+      radiusMeters: 150,
+      address: "Jl. Pramuka No. 67, Purwawinangun, Kec. Kuningan, Kab. Kuningan, Jawa Barat 45512",
     },
   });
 
@@ -64,7 +82,7 @@ async function main() {
   // Admin Account
   const admin = await prisma.user.upsert({
     where: { email: "admin@karyaguard.com" },
-    update: { passwordHash: adminPasswordHash },
+    update: { passwordHash: adminPasswordHash, officeId: office.id },
     create: {
       email: "admin@karyaguard.com",
       passwordHash: adminPasswordHash,
@@ -85,7 +103,7 @@ async function main() {
   // Manager Account
   const manager = await prisma.user.upsert({
     where: { email: "manager@karyaguard.com" },
-    update: { passwordHash: managerPasswordHash },
+    update: { passwordHash: managerPasswordHash, officeId: office.id },
     create: {
       email: "manager@karyaguard.com",
       passwordHash: managerPasswordHash,
@@ -106,7 +124,7 @@ async function main() {
   // Employee Account
   const employee = await prisma.user.upsert({
     where: { email: "user@karyaguard.com" },
-    update: { passwordHash: employeePasswordHash },
+    update: { passwordHash: employeePasswordHash, officeId: office.id },
     create: {
       email: "user@karyaguard.com",
       passwordHash: employeePasswordHash,
