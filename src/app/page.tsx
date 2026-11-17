@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BrandLogo from "@/components/BrandLogo";
 import {
   ShieldCheck,
   Lock,
@@ -23,10 +24,8 @@ export default function HomePage() {
       {/* Top Header */}
       <header className="border-b border-white/[0.08] bg-[#090D16]/90 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <Shield className="w-4 h-4" />
-            </div>
+          <div className="flex items-center gap-3">
+            <BrandLogo className="w-8 h-8" />
             <div>
               <span className="font-bold text-sm tracking-tight text-white">
                 Karya<span className="text-emerald-400">Guard</span>

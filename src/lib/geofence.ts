@@ -49,12 +49,12 @@ export function validateGeofence(
   distanceMeters: number;
   error?: string;
 } {
-  // 1. Verifikasi akurasi GPS: jika accuracy > 100 meter, sinyal terlalu lemah atau emulator
-  if (userPos.accuracy && userPos.accuracy > 100) {
+  // 1. Verifikasi akurasi GPS: jika accuracy > 2000 meter, sinyal terlalu bias
+  if (userPos.accuracy && userPos.accuracy > 2000) {
     return {
       isWithinBounds: false,
       distanceMeters: 0,
-      error: `Akurasi sinyal GPS terlalu rendah (${Math.round(userPos.accuracy)}m). Pastikan GPS perangkat aktif dan tidak menggunakan emulator / mock location.`,
+      error: `Akurasi sinyal GPS terlalu rendah (${Math.round(userPos.accuracy)}m). Pastikan GPS perangkat aktif atau pilih lokasi manual.`,
     };
   }
 

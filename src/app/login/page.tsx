@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import BrandLogo from "@/components/BrandLogo";
 import {
   Shield,
   Lock,
@@ -77,9 +78,7 @@ export default function LoginPage() {
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-sm shadow-emerald-500/10">
-          <Shield className="w-6 h-6" />
-        </div>
+        <BrandLogo className="w-14 h-14 mx-auto mb-2" />
         <h1 className="text-2xl font-bold tracking-tight text-white">
           Akses Portal KaryaGuard
         </h1>
