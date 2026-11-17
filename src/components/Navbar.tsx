@@ -22,7 +22,7 @@ interface NavbarProps {
     fullName: string;
     role: string;
     email: string;
-    department?: string | null;
+    department?: any;
   } | null;
 }
 
@@ -88,6 +88,10 @@ export default function Navbar({ user }: NavbarProps) {
   };
 
   const badge = user ? getRoleBadge(user.role) : null;
+  const departmentName =
+    typeof user?.department === "object" && user?.department !== null
+      ? user.department.name
+      : user?.department;
 
   return (
     <nav className="sticky top-0 z-50 bg-[#090D16]/90 backdrop-blur-md border-b border-white/[0.08]">
@@ -152,7 +156,7 @@ export default function Navbar({ user }: NavbarProps) {
                       {user.fullName}
                     </div>
                     <div className="text-[10px] text-slate-400 truncate max-w-[150px]">
-                      {user.department || user.email}
+                      {departmentName || user.email}
                     </div>
                   </div>
 
