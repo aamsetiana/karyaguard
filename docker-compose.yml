@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: karyaguard-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://karyaguard_user:karyaguard_pass@postgres:5432/karyaguard_db?schema=public
+      - JWT_SECRET=karyaguard_super_secret_jwt_encryption_key_2026_xyz
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - karyaguard-net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: karyaguard-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: karyaguard_user
+      POSTGRES_PASSWORD: karyaguard_pass
+      POSTGRES_DB: karyaguard_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U karyaguard_user -d karyaguard_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - karyaguard-net
+
+  prisma-studio:
+    image: node:20-alpine
+    container_name: karyaguard-studio
+    working_dir: /app
+    volumes:
+      - ./prisma:/app/prisma
+      - ./package.json:/app/package.json
+    command: sh -c "npm install prisma @prisma/client && npx prisma studio --browser none --port 5555"
+    ports:
+      - "5555:5555"
+    environment:
+      - DATABASE_URL=postgresql://karyaguard_user:karyaguard_pass@postgres:5432/karyaguard_db?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - karyaguard-net
+
+volumes:
+  pgdata:
+
+networks:
+  karyaguard-net:
+    driver: bridge
+
