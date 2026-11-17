@@ -9,9 +9,9 @@ import {
   AlertCircle,
   CheckCircle2,
   RefreshCw,
-  ShieldAlert,
-  ArrowRight,
   LogOut,
+  Navigation,
+  ShieldCheck,
 } from "lucide-react";
 
 export default function AttendancePage() {
@@ -91,7 +91,7 @@ export default function AttendancePage() {
         setGeoError(null);
       },
       (err) => {
-        setGeoError(`Gagal membaca lokasi GPS: ${err.message}. Mohon izinkan akses lokasi.`);
+        setGeoError(`Gagal membaca lokasi GPS: ${err.message}. Mohon izinkan izin akses lokasi.`);
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
@@ -111,7 +111,7 @@ export default function AttendancePage() {
     } catch (err: any) {
       setMessage({
         type: "error",
-        text: "Kamera tidak dapat diakses. Pastikan izin kamera aktif pada peramban Anda.",
+        text: "Kamera tidak dapat diakses. Mohon periksa izin kamera pada browser Anda.",
       });
     }
   };
@@ -144,7 +144,7 @@ export default function AttendancePage() {
       return;
     }
     if (!photo) {
-      setMessage({ type: "error", text: "Swafoto wajib diambil untuk verifikasi presensi." });
+      setMessage({ type: "error", text: "Swafoto wajib diambil untuk verifikasi presensi kehadiran." });
       return;
     }
 
@@ -206,32 +206,32 @@ export default function AttendancePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-[#090D16] text-slate-100 flex flex-col">
       <Navbar user={user} />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Clock className="w-6 h-6 text-emerald-400" />
-            <span>Presensi Geofencing & Swafoto</span>
+      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-8 w-full space-y-6">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+            <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400" />
+            <span>Presensi Geofence & Kamera Swafoto</span>
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Presensi divalidasi dengan kalkulasi jarak server-side dan swafoto anti-manipulasi lokasi.
+          <p className="text-xs sm:text-sm text-slate-400 mt-1 font-light">
+            Kalkulasi jarak dilakukan murni di server menggunakan Haversine Formula untuk menangkal lokasi palsu (Fake GPS).
           </p>
         </div>
 
         {message && (
           <div
-            className={`mb-6 p-4 rounded-xl border flex items-start space-x-3 text-sm ${
+            className={`p-4 rounded-xl border flex items-start space-x-3 text-xs sm:text-sm ${
               message.type === "success"
                 ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-300"
                 : "bg-rose-500/10 border-rose-500/20 text-rose-300"
             }`}
           >
             {message.type === "success" ? (
-              <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-400 mt-0.5" />
+              <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-400 mt-0.5" />
             ) : (
-              <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-400 mt-0.5" />
+              <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400 mt-0.5" />
             )}
             <div>
               <p className="font-semibold">
@@ -243,21 +243,28 @@ export default function AttendancePage() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Section 1: Kamera Swafoto */}
-          <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 space-y-4">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-              <Camera className="w-4 h-4 text-emerald-400" />
-              <span>Verifikasi Swafoto (Selfie)</span>
-            </h2>
+          {/* Kamera View Card */}
+          <div className="rounded-2xl border border-white/[0.08] bg-[#0C121E] p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                <Camera className="w-4 h-4 text-emerald-400" />
+                <span>Kamera Swafoto</span>
+              </span>
+              {photo && (
+                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                  Foto Siap
+                </span>
+              )}
+            </div>
 
-            <div className="relative aspect-video bg-slate-950 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
+            <div className="relative aspect-video bg-black/50 rounded-xl overflow-hidden border border-white/[0.08] flex items-center justify-center">
               {photo ? (
                 <img src={photo} alt="Swafoto" className="w-full h-full object-cover" />
               ) : cameraActive ? (
                 <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
               ) : (
-                <div className="text-center p-6 text-slate-500">
-                  <Camera className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                <div className="text-center p-6 text-slate-500 space-y-2">
+                  <Camera className="w-8 h-8 mx-auto opacity-40 text-slate-400" />
                   <p className="text-xs">Kamera belum diaktifkan</p>
                 </div>
               )}
@@ -270,10 +277,10 @@ export default function AttendancePage() {
                 <button
                   type="button"
                   onClick={startCamera}
-                  className="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs rounded-xl border border-slate-700 flex items-center justify-center gap-2 transition"
+                  className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] text-slate-200 font-semibold text-xs rounded-xl border border-white/[0.08] flex items-center justify-center gap-2 transition"
                 >
                   <Camera className="w-4 h-4 text-emerald-400" />
-                  <span>Aktifkan Kamera</span>
+                  <span>Nyalakan Kamera</span>
                 </button>
               )}
 
@@ -281,7 +288,7 @@ export default function AttendancePage() {
                 <button
                   type="button"
                   onClick={capturePhoto}
-                  className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-900/40 flex items-center justify-center gap-2 transition"
+                  className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition"
                 >
                   <Camera className="w-4 h-4" />
                   <span>Ambil Foto</span>
@@ -292,53 +299,54 @@ export default function AttendancePage() {
                 <button
                   type="button"
                   onClick={startCamera}
-                  className="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-xl border border-slate-700 flex items-center justify-center gap-2 transition"
+                  className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 text-xs rounded-xl border border-white/[0.08] flex items-center justify-center gap-2 transition"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Foto Ulang</span>
+                  <span>Ambil Ulang</span>
                 </button>
               )}
             </div>
           </div>
 
-          {/* Section 2: Koordinat & Status Geofence */}
-          <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 space-y-5 flex flex-col justify-between">
+          {/* Lokasi & Status Geofence Card */}
+          <div className="rounded-2xl border border-white/[0.08] bg-[#0C121E] p-5 sm:p-6 space-y-5 flex flex-col justify-between">
             <div className="space-y-4">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-300 flex items-center justify-between">
-                <span className="flex items-center gap-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
                   <MapPin className="w-4 h-4 text-rose-400" />
-                  <span>Deteksi Lokasi GPS</span>
+                  <span>Status Lokasi GPS</span>
                 </span>
                 <button
                   onClick={startGeolocation}
-                  className="text-xs text-slate-400 hover:text-white flex items-center gap-1"
-                  title="Perbarui GPS"
+                  className="text-[11px] text-slate-400 hover:text-white flex items-center gap-1"
                 >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Refresh</span>
+                  <RefreshCw className="w-3 h-3" />
+                  <span>Perbarui</span>
                 </button>
-              </h2>
+              </div>
 
-              <div className="bg-slate-950 rounded-xl p-4 border border-slate-800 space-y-3 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Kantor Ditugaskan:</span>
-                  <span className="text-slate-200 font-semibold">{user?.office?.name || "Menara Karya Jakarta"}</span>
+              <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] p-4 space-y-2.5 text-xs">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Kantor Terdaftar:</span>
+                  <span className="text-white font-semibold">{user?.office?.name || "Menara Karya Jakarta"}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Radius Diizinkan:</span>
-                  <span className="text-emerald-400 font-mono font-semibold">{user?.office?.radiusMeters || 100} Meter</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Batas Toleransi:</span>
+                  <span className="text-emerald-400 font-mono font-bold">
+                    {user?.office?.radiusMeters || 100} Meter
+                  </span>
                 </div>
-                <div className="flex justify-between pt-2 border-t border-slate-800/80">
-                  <span className="text-slate-400">Latitude Karyawan:</span>
-                  <span className="font-mono text-slate-300">{coords ? coords.lat.toFixed(6) : "Mendeteksi..."}</span>
+                <div className="pt-2 border-t border-white/[0.06] flex justify-between items-center font-mono text-[11px]">
+                  <span className="text-slate-400">Latitude:</span>
+                  <span className="text-slate-200">{coords ? coords.lat.toFixed(6) : "Mendeteksi..."}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Longitude Karyawan:</span>
-                  <span className="font-mono text-slate-300">{coords ? coords.lng.toFixed(6) : "Mendeteksi..."}</span>
+                <div className="flex justify-between items-center font-mono text-[11px]">
+                  <span className="text-slate-400">Longitude:</span>
+                  <span className="text-slate-200">{coords ? coords.lng.toFixed(6) : "Mendeteksi..."}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Akurasi GPS:</span>
-                  <span className="font-mono text-slate-300">
+                <div className="flex justify-between items-center font-mono text-[11px]">
+                  <span className="text-slate-400">Akurasi Sinyal:</span>
+                  <span className="text-slate-200">
                     {coords ? `±${Math.round(coords.accuracy)} meter` : "-"}
                   </span>
                 </div>
@@ -352,27 +360,27 @@ export default function AttendancePage() {
               )}
             </div>
 
-            {/* Aksi Check-In / Check-Out */}
-            <div className="pt-4 border-t border-slate-800 space-y-3">
+            {/* Tombol Action Check-In / Check-Out */}
+            <div className="pt-4 border-t border-white/[0.06]">
               {!checkedInToday ? (
                 <button
                   type="button"
                   onClick={handleCheckIn}
                   disabled={submitting || !coords || !photo}
-                  className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-950/50 flex items-center justify-center gap-2 transition"
+                  className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition"
                 >
                   <Clock className="w-4 h-4" />
-                  <span>{submitting ? "Memvalidasi Geofence..." : "Kirim Presensi Masuk (Check-In)"}</span>
+                  <span>{submitting ? "Memvalidasi Jarak..." : "Kirim Presensi Masuk (Check-In)"}</span>
                 </button>
               ) : !checkedOutToday ? (
                 <button
                   type="button"
                   onClick={handleCheckOut}
                   disabled={submitting}
-                  className="w-full py-3 px-4 bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-950/50 flex items-center justify-center gap-2 transition"
+                  className="w-full py-3 px-4 bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-amber-950/40 flex items-center justify-center gap-2 transition"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span>{submitting ? "Memproses Check-Out..." : "Presensi Pulang (Check-Out)"}</span>
+                  <span>{submitting ? "Memproses..." : "Presensi Pulang (Check-Out)"}</span>
                 </button>
               ) : (
                 <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center text-xs text-emerald-400 font-semibold">
@@ -386,4 +394,3 @@ export default function AttendancePage() {
     </div>
   );
 }
-

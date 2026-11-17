@@ -12,6 +12,8 @@ import {
   AlertTriangle,
   ArrowRight,
   MapPin,
+  ShieldAlert,
+  ChevronRight,
   TrendingUp,
 } from "lucide-react";
 
@@ -50,7 +52,7 @@ export default async function DashboardPage() {
   const latestPayroll = user.payrolls[0];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-[#090D16] text-slate-100 flex flex-col">
       <Navbar
         user={{
           fullName: user.fullName,
@@ -60,188 +62,200 @@ export default async function DashboardPage() {
         }}
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Welcome Banner */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/40 p-6 sm:p-8 border border-slate-800">
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-1">
-                <ShieldCheck className="w-4 h-4" />
-                <span>Zero-Trust Enterprise HRIS</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                Selamat Datang, {user.fullName}
-              </h1>
-              <p className="text-sm text-slate-400 mt-1">
-                NIK: <span className="font-mono text-slate-300">{user.nik}</span> • Departemen:{" "}
-                <span className="text-slate-300">{user.department?.name || "Umum"}</span> • Penugasan:{" "}
-                <span className="text-slate-300">{user.office?.name || "Kantor Pusat"}</span>
-              </p>
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 w-full">
+        {/* Profile & Welcome Banner */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0C121E] p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span>Sesi Aktif Terenkripsi (HttpOnly)</span>
             </div>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight">
+              Selamat Datang, {user.fullName}
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-400 font-light">
+              NIK: <span className="font-mono text-slate-200 font-medium">{user.nik}</span> • Divisi:{" "}
+              <span className="text-slate-200 font-medium">{user.department?.name || "Umum"}</span> • Penugasan:{" "}
+              <span className="text-slate-200 font-medium">{user.office?.name || "Pusat"}</span>
+            </p>
+          </div>
 
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href="/attendance"
-                className="inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-900/30 transition"
-              >
-                <Clock className="w-4 h-4" />
-                <span>Presensi Selfie</span>
-              </Link>
-              <Link
-                href="/leave"
-                className="inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm px-4 py-2.5 rounded-xl border border-slate-700 transition"
-              >
-                <Calendar className="w-4 h-4 text-sky-400" />
-                <span>Ajukan Cuti</span>
-              </Link>
-            </div>
+          <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
+            <Link
+              href="/attendance"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-950/40 transition"
+            >
+              <Clock className="w-4 h-4" />
+              <span>Presensi Kamera</span>
+            </Link>
+            <Link
+              href="/leave"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] text-slate-200 font-medium text-xs px-4 py-2.5 rounded-xl border border-white/[0.08] transition"
+            >
+              <Calendar className="w-4 h-4 text-sky-400" />
+              <span>Ajukan Izin</span>
+            </Link>
           </div>
         </div>
 
-        {/* Status Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1: Status Presensi Hari Ini */}
-          <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 flex flex-col justify-between">
+        {/* 3 Metrics Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {/* Card 1: Presensi Hari Ini */}
+          <div className="rounded-2xl border border-white/[0.08] bg-[#0C121E] p-5 sm:p-6 flex flex-col justify-between space-y-4">
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <div className="flex items-center justify-between text-xs text-slate-400 mb-3">
+                <span className="font-semibold uppercase tracking-wider text-[11px]">
                   Presensi Hari Ini
                 </span>
-                <span className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  <Clock className="w-5 h-5" />
+                <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+                  <Clock className="w-4 h-4" />
                 </span>
               </div>
-              <div className="text-xl font-bold text-white">
+
+              <div className="text-lg sm:text-xl font-bold text-white">
                 {todayAttendance ? (
                   todayAttendance.checkInStatus === "ON_TIME" ? (
                     <span className="text-emerald-400 flex items-center gap-1.5">
-                      <CheckCircle2 className="w-5 h-5" /> Tepat Waktu
+                      <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+                      <span>Hadir Tepat Waktu</span>
                     </span>
                   ) : (
                     <span className="text-amber-400 flex items-center gap-1.5">
-                      <AlertTriangle className="w-5 h-5" /> Terlambat ({todayAttendance.lateMinutes}m)
+                      <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+                      <span>Terlambat ({todayAttendance.lateMinutes}m)</span>
                     </span>
                   )
                 ) : (
-                  <span className="text-slate-400">Belum Check-In</span>
+                  <span className="text-slate-400 font-normal">Belum Presensi Masuk</span>
                 )}
               </div>
-              <p className="text-xs text-slate-400 mt-2">
+
+              <p className="text-[11px] text-slate-400 mt-2 font-mono">
                 {todayAttendance
                   ? `Masuk: ${new Date(todayAttendance.checkInTime).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} • Jarak: ${Number(todayAttendance.checkInDistanceMeters).toFixed(0)}m`
-                  : `Shift: ${user.shift?.startTime || "08:00"} - ${user.shift?.endTime || "17:00"}`}
+                  : `Jadwal Shift: ${user.shift?.startTime || "08:00"} - ${user.shift?.endTime || "17:00"}`}
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-slate-800/80">
+
+            <div className="pt-3 border-t border-white/[0.06]">
               <Link
                 href="/attendance"
                 className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center justify-between group"
               >
-                <span>Buka Kamera Presensi</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                <span>Buka Form Presensi</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
               </Link>
             </div>
           </div>
 
           {/* Card 2: Sisa Kuota Cuti */}
-          <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 flex flex-col justify-between">
+          <div className="rounded-2xl border border-white/[0.08] bg-[#0C121E] p-5 sm:p-6 flex flex-col justify-between space-y-4">
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <div className="flex items-center justify-between text-xs text-slate-400 mb-3">
+                <span className="font-semibold uppercase tracking-wider text-[11px]">
                   Sisa Kuota Cuti
                 </span>
-                <span className="p-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20">
-                  <Calendar className="w-5 h-5" />
+                <span className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center justify-center">
+                  <Calendar className="w-4 h-4" />
                 </span>
               </div>
-              <div className="text-2xl font-bold text-white">
+
+              <div className="text-2xl sm:text-3xl font-extrabold text-white">
                 {user.leaveBalance}{" "}
-                <span className="text-sm font-normal text-slate-400">Hari</span>
+                <span className="text-xs font-normal text-slate-400">Hari Tersisa</span>
               </div>
-              <p className="text-xs text-slate-400 mt-2">
-                Hak cuti tahunan yang dapat diajukan pada periode tahun berjalan.
+
+              <p className="text-[11px] text-slate-400 mt-2 font-light">
+                Dapat digunakan untuk pengajuan cuti tahunan dengan persetujuan atasan.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-slate-800/80">
+
+            <div className="pt-3 border-t border-white/[0.06]">
               <Link
                 href="/leave"
                 className="text-xs font-semibold text-sky-400 hover:text-sky-300 flex items-center justify-between group"
               >
                 <span>Riwayat & Form Cuti</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
               </Link>
             </div>
           </div>
 
           {/* Card 3: Slip Gaji Terbaru */}
-          <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 flex flex-col justify-between">
+          <div className="rounded-2xl border border-white/[0.08] bg-[#0C121E] p-5 sm:p-6 flex flex-col justify-between space-y-4 sm:col-span-2 lg:col-span-1">
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <div className="flex items-center justify-between text-xs text-slate-400 mb-3">
+                <span className="font-semibold uppercase tracking-wider text-[11px]">
                   Slip Gaji Terbaru
                 </span>
-                <span className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                  <FileText className="w-5 h-5" />
+                <span className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center">
+                  <FileText className="w-4 h-4" />
                 </span>
               </div>
-              <div className="text-xl font-bold text-emerald-400">
+
+              <div className="text-lg sm:text-xl font-bold text-emerald-400 font-mono">
                 {latestPayroll
                   ? `Rp ${Number(latestPayroll.netSalary).toLocaleString("id-ID")}`
                   : "Belum Diterbitkan"}
               </div>
-              <p className="text-xs text-slate-400 mt-2">
+
+              <p className="text-[11px] text-slate-400 mt-2 font-light">
                 {latestPayroll
-                  ? `Periode ${latestPayroll.month}/${latestPayroll.year} • Status: ${latestPayroll.status}`
-                  : "Slip gaji bulan berjalan akan dikalkulasi oleh HR."}
+                  ? `Periode Bulan ${latestPayroll.month}/${latestPayroll.year} • Status: ${latestPayroll.status}`
+                  : "Gaji bulanan akan dihitung otomatis oleh HR Admin."}
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-slate-800/80">
+
+            <div className="pt-3 border-t border-white/[0.06]">
               <Link
                 href="/payroll"
                 className="text-xs font-semibold text-amber-400 hover:text-amber-300 flex items-center justify-between group"
               >
                 <span>Unduh Slip Resmi (PDF)</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Quick Links Section & Recent History Table */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Riwayat Presensi Terakhir */}
-          <div className="lg:col-span-2 bg-slate-900 rounded-2xl p-6 border border-slate-800">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Clock className="w-5 h-5 text-emerald-400" />
+        {/* Content Section: Table & Info */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Table Riwayat Presensi Terbaru */}
+          <div className="lg:col-span-2 rounded-2xl border border-white/[0.08] bg-[#0C121E] p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                <Clock className="w-4 h-4 text-emerald-400" />
                 <span>Riwayat Presensi Terbaru Anda</span>
               </h2>
-              <Link href="/attendance" className="text-xs text-slate-400 hover:text-white transition">
-                Lihat Semua
+              <Link
+                href="/attendance"
+                className="text-[11px] text-slate-400 hover:text-white transition"
+              >
+                Buka Kamera Presensi &rarr;
               </Link>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-300">
-                <thead className="text-xs uppercase bg-slate-950 text-slate-400 border-b border-slate-800">
+            <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
+              <table className="w-full text-left text-xs text-slate-300">
+                <thead className="text-[10px] uppercase tracking-wider bg-white/[0.02] text-slate-400 border-b border-white/[0.06]">
                   <tr>
-                    <th className="py-3 px-4">Tanggal</th>
-                    <th className="py-3 px-4">Jam Masuk</th>
-                    <th className="py-3 px-4">Jarak Geofence</th>
-                    <th className="py-3 px-4">Status</th>
+                    <th className="py-3 px-3.5">Tanggal</th>
+                    <th className="py-3 px-3.5">Jam Masuk</th>
+                    <th className="py-3 px-3.5">Jarak Kantor</th>
+                    <th className="py-3 px-3.5">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800">
+                <tbody className="divide-y divide-white/[0.06]">
                   {user.attendances.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="py-6 text-center text-slate-500">
-                        Belum ada catatan presensi.
+                      <td colSpan={4} className="py-8 text-center text-slate-500 font-light">
+                        Belum ada catatan presensi kehadiran.
                       </td>
                     </tr>
                   ) : (
                     user.attendances.map((att) => (
-                      <tr key={att.id} className="hover:bg-slate-800/40 transition">
-                        <td className="py-3.5 px-4 font-medium text-white">
+                      <tr key={att.id} className="hover:bg-white/[0.02] transition">
+                        <td className="py-3 px-3.5 font-medium text-white whitespace-nowrap">
                           {new Date(att.date).toLocaleDateString("id-ID", {
                             weekday: "short",
                             day: "numeric",
@@ -249,22 +263,22 @@ export default async function DashboardPage() {
                             year: "numeric",
                           })}
                         </td>
-                        <td className="py-3.5 px-4">
+                        <td className="py-3 px-3.5 font-mono">
                           {new Date(att.checkInTime).toLocaleTimeString("id-ID", {
                             hour: "2-digit",
                             minute: "2-digit",
                           })}
                         </td>
-                        <td className="py-3.5 px-4 text-xs font-mono text-slate-400">
-                          {Number(att.checkInDistanceMeters).toFixed(1)} m
+                        <td className="py-3 px-3.5 font-mono text-slate-400">
+                          {Number(att.checkInDistanceMeters).toFixed(0)} m
                         </td>
-                        <td className="py-3.5 px-4">
+                        <td className="py-3 px-3.5">
                           {att.checkInStatus === "ON_TIME" ? (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                               Tepat Waktu
                             </span>
                           ) : (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
                               Terlambat ({att.lateMinutes}m)
                             </span>
                           )}
@@ -277,44 +291,44 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          {/* Lokasi Kantor Terdaftar & Proteksi Keamanan */}
-          <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 space-y-6">
-            <div>
-              <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
-                <MapPin className="w-5 h-5 text-rose-400" />
-                <span>Geofence Lokasi Kerja</span>
+          {/* Right Column: Geofence Info & Security Safeguards */}
+          <div className="rounded-2xl border border-white/[0.08] bg-[#0C121E] p-5 sm:p-6 space-y-6 flex flex-col justify-between">
+            <div className="space-y-4">
+              <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-rose-400" />
+                <span>Geofence Lokasi Kantor</span>
               </h2>
-              <div className="bg-slate-950 rounded-xl p-4 border border-slate-800 text-xs space-y-2">
-                <div className="text-slate-200 font-semibold">{user.office?.name || "Kantor Pusat"}</div>
-                <div className="text-slate-400">{user.office?.address || "Alamat kantor"}</div>
-                <div className="pt-2 border-t border-slate-800/80 flex justify-between text-slate-400 font-mono">
-                  <span>Radius Maksimal:</span>
-                  <span className="text-emerald-400 font-bold">{user.office?.radiusMeters || 100} Meter</span>
+
+              <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] p-4 text-xs space-y-2">
+                <div className="font-semibold text-white">{user.office?.name || "Kantor Pusat"}</div>
+                <div className="text-slate-400 text-[11px] font-light leading-relaxed">
+                  {user.office?.address || "Alamat kantor"}
+                </div>
+                <div className="pt-2 border-t border-white/[0.06] flex justify-between items-center text-[11px]">
+                  <span className="text-slate-400">Radius Toleransi:</span>
+                  <span className="text-emerald-400 font-mono font-bold">
+                    {user.office?.radiusMeters || 100} Meter
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-800">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>Fitur Keamanan Terpasang</span>
-              </h3>
-              <ul className="text-xs text-slate-400 space-y-2.5">
+            <div className="pt-4 border-t border-white/[0.06] space-y-2.5">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
+                Pencegahan Keamanan Aktif
+              </span>
+              <ul className="text-xs text-slate-400 space-y-2">
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  <span>Server-side Haversine Distance Validation</span>
+                  <span>Anti-IDOR Strict Resource Ownership</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  <span>Anti-IDOR Strict Resource Ownership Guard</span>
+                  <span>Server-Side Haversine Verification</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  <span>Bcrypt Salt-12 & HttpOnly JWT Sesi</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  <span>Cryptographic SHA-256 Payroll Integrity</span>
+                  <span>SHA-256 Payroll Tamper-Proof Seal</span>
                 </li>
               </ul>
             </div>
@@ -324,4 +338,3 @@ export default async function DashboardPage() {
     </div>
   );
 }
-

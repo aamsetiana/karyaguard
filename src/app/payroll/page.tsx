@@ -75,27 +75,27 @@ export default function PayrollPage() {
   const formatRupiah = (num: number) => "Rp " + num.toLocaleString("id-ID");
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-[#090D16] text-slate-100 flex flex-col">
       <Navbar user={user} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-              <FileText className="w-6 h-6 text-amber-400" />
+            <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+              <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400" />
               <span>Slip Gaji & Penggajian (Payroll)</span>
             </h1>
-            <p className="text-sm text-slate-400 mt-1">
-              Slip gaji digital resmi dilengkapi tanda tangan integritas SHA-256 dan kode QR verifikasi keaslian.
+            <p className="text-xs sm:text-sm text-slate-400 mt-1 font-light">
+              Slip gaji digital resmi dilengkapi tanda tangan integritas SHA-256 dan kode QR verifikasi keabsahan.
             </p>
           </div>
 
           {user?.role === "ADMIN" && (
-            <div className="flex items-center gap-3 bg-slate-900 p-2 rounded-xl border border-slate-800">
+            <div className="flex flex-wrap items-center gap-2.5 bg-[#0C121E] p-2 rounded-xl border border-white/[0.08]">
               <select
                 value={month}
                 onChange={(e) => setMonth(Number(e.target.value))}
-                className="bg-slate-950 text-xs border border-slate-700 rounded-lg py-2 px-3 text-white focus:outline-none"
+                className="bg-black/40 text-xs border border-white/[0.08] rounded-lg py-1.5 px-2.5 text-white focus:outline-none"
               >
                 {[...Array(12)].map((_, i) => (
                   <option key={i + 1} value={i + 1}>
@@ -107,7 +107,7 @@ export default function PayrollPage() {
               <select
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
-                className="bg-slate-950 text-xs border border-slate-700 rounded-lg py-2 px-3 text-white focus:outline-none"
+                className="bg-black/40 text-xs border border-white/[0.08] rounded-lg py-1.5 px-2.5 text-white focus:outline-none"
               >
                 <option value={2026}>2026</option>
                 <option value={2025}>2025</option>
@@ -116,9 +116,9 @@ export default function PayrollPage() {
               <button
                 onClick={handleCalculatePayroll}
                 disabled={calculating}
-                className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold rounded-lg shadow-sm transition"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold rounded-lg shadow-sm transition"
               >
-                <Calculator className="w-4 h-4" />
+                <Calculator className="w-3.5 h-3.5" />
                 <span>{calculating ? "Menghitung..." : "Hitung Payroll"}</span>
               </button>
             </div>
@@ -127,16 +127,16 @@ export default function PayrollPage() {
 
         {message && (
           <div
-            className={`p-4 rounded-xl border flex items-start space-x-3 text-sm ${
+            className={`p-4 rounded-xl border flex items-start space-x-3 text-xs sm:text-sm ${
               message.type === "success"
                 ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-300"
                 : "bg-rose-500/10 border-rose-500/20 text-rose-300"
             }`}
           >
             {message.type === "success" ? (
-              <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-400 mt-0.5" />
+              <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-400 mt-0.5" />
             ) : (
-              <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-400 mt-0.5" />
+              <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400 mt-0.5" />
             )}
             <div>
               <p className="font-semibold">{message.type === "success" ? "Berhasil" : "Gagal"}</p>
@@ -145,82 +145,82 @@ export default function PayrollPage() {
           </div>
         )}
 
-        {/* Tabel Daftar Slip Gaji */}
-        <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
-          <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+        {/* Tabel Slip Gaji */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0C121E] overflow-hidden">
+          <div className="p-4 sm:p-5 border-b border-white/[0.06] flex justify-between items-center text-xs">
+            <h2 className="font-bold text-white flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
               <span>
                 {user?.role === "ADMIN"
                   ? "Seluruh Rekapitulasi Slip Gaji Karyawan"
                   : "Daftar Slip Gaji Resmi Anda"}
               </span>
             </h2>
-            <span className="text-xs text-slate-400">Total: {payrolls.length} Dokumen</span>
+            <span className="text-slate-400 font-mono text-[11px]">Total: {payrolls.length} Dokumen</span>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-300">
-              <thead className="text-xs uppercase bg-slate-950 text-slate-400 border-b border-slate-800">
+            <table className="w-full text-left text-xs text-slate-300">
+              <thead className="text-[10px] uppercase tracking-wider bg-white/[0.02] text-slate-400 border-b border-white/[0.06]">
                 <tr>
-                  {user?.role === "ADMIN" && <th className="py-3 px-4">Karyawan</th>}
-                  <th className="py-3 px-4">Periode</th>
-                  <th className="py-3 px-4">Gaji Pokok</th>
-                  <th className="py-3 px-4">Tunjangan & Lembur</th>
-                  <th className="py-3 px-4">Potongan & Denda</th>
-                  <th className="py-3 px-4 font-bold text-emerald-400">Gaji Bersih (THP)</th>
-                  <th className="py-3 px-4">Digital Hash</th>
-                  <th className="py-3 px-4 text-center">Unduh</th>
+                  {user?.role === "ADMIN" && <th className="py-3 px-3.5">Karyawan</th>}
+                  <th className="py-3 px-3.5">Periode</th>
+                  <th className="py-3 px-3.5">Gaji Pokok</th>
+                  <th className="py-3 px-3.5">Tunjangan & Lembur</th>
+                  <th className="py-3 px-3.5">Potongan</th>
+                  <th className="py-3 px-3.5 font-bold text-emerald-400">Take-Home Pay</th>
+                  <th className="py-3 px-3.5">Digital Hash</th>
+                  <th className="py-3 px-3.5 text-center">Unduh</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800">
+              <tbody className="divide-y divide-white/[0.06]">
                 {payrolls.length === 0 ? (
                   <tr>
-                    <td colSpan={user?.role === "ADMIN" ? 8 : 7} className="py-8 text-center text-slate-500 text-xs">
+                    <td colSpan={user?.role === "ADMIN" ? 8 : 7} className="py-8 text-center text-slate-500 font-light">
                       Belum ada data slip gaji yang diterbitkan.
                     </td>
                   </tr>
                 ) : (
                   payrolls.map((p) => (
-                    <tr key={p.id} className="hover:bg-slate-800/40">
+                    <tr key={p.id} className="hover:bg-white/[0.02] transition">
                       {user?.role === "ADMIN" && (
-                        <td className="py-3.5 px-4">
+                        <td className="py-3 px-3.5">
                           <div className="font-semibold text-white">{p.user?.fullName}</div>
-                          <div className="text-xs text-slate-400 font-mono">{p.user?.nik}</div>
+                          <div className="text-[10px] text-slate-400 font-mono">{p.user?.nik}</div>
                         </td>
                       )}
-                      <td className="py-3.5 px-4 font-mono font-medium text-slate-200">
+                      <td className="py-3 px-3.5 font-mono text-slate-200 whitespace-nowrap">
                         Bulan {p.month}/{p.year}
                       </td>
-                      <td className="py-3.5 px-4 text-xs font-mono">
+                      <td className="py-3 px-3.5 font-mono text-slate-300">
                         {formatRupiah(Number(p.baseSalary))}
                       </td>
-                      <td className="py-3.5 px-4 text-xs font-mono text-emerald-300">
+                      <td className="py-3 px-3.5 font-mono text-emerald-400">
                         +{formatRupiah(Number(p.allowances) + Number(p.overtimePay))}
                       </td>
-                      <td className="py-3.5 px-4 text-xs font-mono text-rose-300">
+                      <td className="py-3 px-3.5 font-mono text-rose-400">
                         -{formatRupiah(Number(p.lateDeduction) + Number(p.taxDeduction) + Number(p.insuranceDeduction))}
                       </td>
-                      <td className="py-3.5 px-4 font-mono font-bold text-emerald-400">
+                      <td className="py-3 px-3.5 font-mono font-bold text-emerald-400">
                         {formatRupiah(Number(p.netSalary))}
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-3.5">
                         <span
-                          className="inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                          className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                           title={`SHA-256: ${p.integrityHash}`}
                         >
                           <Hash className="w-3 h-3" />
                           <span>{p.integrityHash.slice(0, 8)}...</span>
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-center">
+                      <td className="py-3 px-3.5 text-center">
                         <a
                           href={`/api/payroll/${p.id}/download`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-amber-600 hover:text-white text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/[0.04] hover:bg-amber-600 hover:text-white text-slate-200 text-[11px] font-semibold rounded-lg border border-white/[0.08] transition"
                         >
-                          <Download className="w-3.5 h-3.5" />
+                          <Download className="w-3 h-3" />
                           <span>PDF</span>
                         </a>
                       </td>
@@ -235,4 +235,3 @@ export default function PayrollPage() {
     </div>
   );
 }
-

@@ -2,7 +2,18 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Shield, Lock, Mail, AlertCircle, CheckCircle2, UserCheck, ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import {
+  Shield,
+  Lock,
+  Mail,
+  AlertCircle,
+  CheckCircle2,
+  ShieldCheck,
+  UserCheck,
+  ArrowRight,
+  ChevronLeft,
+} from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -53,39 +64,50 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-slate-100">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mb-4 shadow-lg shadow-emerald-500/5">
-          <Shield className="w-8 h-8" />
+    <div className="min-h-screen bg-[#090D16] flex flex-col justify-center px-4 sm:px-6 lg:px-8 text-slate-100 py-12">
+      {/* Back to Home Link */}
+      <div className="sm:mx-auto sm:w-full sm:max-w-md mb-6">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          <span>Kembali ke Beranda</span>
+        </Link>
+      </div>
+
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-sm shadow-emerald-500/10">
+          <Shield className="w-6 h-6" />
         </div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-white">
-          KaryaGuard Portal
-        </h2>
-        <p className="mt-2 text-sm text-slate-400">
-          Secure HRIS, Geofenced Attendance & Payroll System
+        <h1 className="text-2xl font-bold tracking-tight text-white">
+          Akses Portal KaryaGuard
+        </h1>
+        <p className="text-xs text-slate-400">
+          Autentikasi terenkripsi bcrypt dengan perlindungan brute-force laju IP.
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-slate-900 py-8 px-6 shadow-xl rounded-2xl sm:px-10 border border-slate-800">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-[#0C121E] py-8 px-6 sm:px-8 rounded-2xl border border-white/[0.08] shadow-2xl space-y-6">
           {error && (
-            <div className="mb-6 bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 flex items-start space-x-3 text-rose-300 text-sm">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-400 mt-0.5" />
+            <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold">Autentikasi Gagal</p>
-                <p className="mt-0.5">{error}</p>
+                <p className="mt-0.5 text-rose-400/90">{error}</p>
               </div>
             </div>
           )}
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wider text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                 Alamat Email
               </label>
-              <div className="relative rounded-lg shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                  <Mail className="h-5 h-5" />
+              <div className="relative rounded-xl shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                  <Mail className="h-4 h-4" />
                 </div>
                 <input
                   type="email"
@@ -93,18 +115,18 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nama@karyaguard.com"
-                  className="block w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+                  className="block w-full pl-10 pr-3.5 py-2.5 bg-black/40 border border-white/[0.08] rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 text-xs transition font-mono"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wider text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                 Kata Sandi
               </label>
-              <div className="relative rounded-lg shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                  <Lock className="h-5 h-5" />
+              <div className="relative rounded-xl shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                  <Lock className="h-4 h-4" />
                 </div>
                 <input
                   type="password"
@@ -112,7 +134,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="block w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+                  className="block w-full pl-10 pr-3.5 py-2.5 bg-black/40 border border-white/[0.08] rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 text-xs transition"
                 />
               </div>
             </div>
@@ -120,47 +142,48 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-emerald-500 disabled:opacity-50 transition"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 transition shadow-lg shadow-emerald-950/40"
             >
-              {loading ? "Memverifikasi Kredensial..." : "Masuk ke Sistem"}
+              <span>{loading ? "Memverifikasi..." : "Masuk ke Sistem"}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </form>
 
-          {/* Quick Demo Credentials Box */}
-          <div className="mt-8 pt-6 border-t border-slate-800">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 text-center">
-              Pilihan Cepat Akun Uji Coba (Demo Dosen)
+          {/* Demo Quick Fill Buttons */}
+          <div className="pt-5 border-t border-white/[0.08] space-y-2.5">
+            <p className="text-[11px] font-semibold text-slate-400 text-center uppercase tracking-wider">
+              Tombol Cepat Akun Demo (Uji Coba Dosen)
             </p>
             <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => fillCredentials("admin")}
-                className="flex flex-col items-center justify-center p-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-rose-500/40 hover:bg-rose-500/5 transition text-xs group"
+                className="p-2 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-rose-500/30 hover:bg-rose-500/5 transition flex flex-col items-center justify-center text-center group"
               >
                 <ShieldCheck className="w-4 h-4 text-rose-400 mb-1" />
-                <span className="font-medium text-slate-200">HR Admin</span>
+                <span className="text-[11px] font-semibold text-slate-200">Admin</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => fillCredentials("manager")}
-                className="flex flex-col items-center justify-center p-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-amber-500/40 hover:bg-amber-500/5 transition text-xs group"
+                className="p-2 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-amber-500/30 hover:bg-amber-500/5 transition flex flex-col items-center justify-center text-center group"
               >
                 <UserCheck className="w-4 h-4 text-amber-400 mb-1" />
-                <span className="font-medium text-slate-200">Manager</span>
+                <span className="text-[11px] font-semibold text-slate-200">Manager</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => fillCredentials("user")}
-                className="flex flex-col items-center justify-center p-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-emerald-500/40 hover:bg-emerald-500/5 transition text-xs group"
+                className="p-2 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-emerald-500/30 hover:bg-emerald-500/5 transition flex flex-col items-center justify-center text-center group"
               >
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 mb-1" />
-                <span className="font-medium text-slate-200">Karyawan</span>
+                <span className="text-[11px] font-semibold text-slate-200">Karyawan</span>
               </button>
             </div>
-            <p className="text-[11px] text-slate-500 text-center mt-3">
-              Dilindungi enkripsi sandi bcrypt, token JWT HttpOnly, dan rate limiter brute-force.
+            <p className="text-[10px] text-slate-500 text-center">
+              Token JWT disimpan otomatis di Cookie dengan flag HttpOnly & SameSite=Lax.
             </p>
           </div>
         </div>
@@ -168,4 +191,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
