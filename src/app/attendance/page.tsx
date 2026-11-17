@@ -230,7 +230,7 @@ export default function AttendancePage() {
     });
   };
 
-  // Preset koordinat cepat untuk pengujian dosen / demo
+  // Preset koordinat cepat untuk simulasi / evaluasi radius
   const setPositionToOfficeCampus2 = () => {
     const lat = user?.office?.latitude ? String(user.office.latitude) : "-6.9756855";
     const lng = user?.office?.longitude ? String(user.office.longitude) : "108.4774808";
@@ -740,7 +740,7 @@ export default function AttendancePage() {
                   onClick={setPositionOutOfRadiusDemo}
                   className="px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-[11px] font-medium transition"
                 >
-                  ⚠️ Simulasi 6 KM (Uji Penolakan Dosen)
+                  ⚠️ Simulasi 6 KM (Uji Penolakan Radius)
                 </button>
               </div>
             </div>

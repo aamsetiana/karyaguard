@@ -1,7 +1,7 @@
 # Peta Jalan Pengembangan (Project Roadmap)
 ## KaryaGuard — Secure HRIS, Geofenced Attendance & Payroll System
 
-> **Tujuan**: Panduan eksekusi bertahap (*step-by-step execution*) agar proses pengerjaan terstruktur, minim kendala (*zero blockers*), dan riwayat commit Git mencerminkan pengerjaan mandiri yang rapi sesuai rubrik penilaian.
+> **Tujuan**: Panduan eksekusi bertahap (*step-by-step execution*) agar proses pengerjaan terstruktur, minim kendala (*zero blockers*), dan riwayat commit Git mencerminkan standar rekayasa perangkat lunak produksi.
 
 ---
 
@@ -37,7 +37,7 @@
 * [ ] CRUD Kantor & Geofence (Nama kantor, Latitude, Longitude, Radius toleransi meter).
 * [ ] CRUD Shift Kerja (Nama shift, jam masuk, jam pulang, toleransi telat menit).
 * [ ] Manajemen Pengguna / Karyawan (Input profil, NIK, penugasan divisi & kantor, struktur gaji dasar).
-* [ ] Seeding Database: Buat script `prisma/seed.ts` yang otomatis mengisikan akun uji coba dosen (`admin@karyaguard.com`, `manager@karyaguard.com`, `user@karyaguard.com`).
+* [ ] Seeding Database: Buat script `prisma/seed.ts` yang otomatis mengisikan akun demonstrasi sistem (`admin@karyaguard.com`, `manager@karyaguard.com`, `user@karyaguard.com`).
 
 ---
 
@@ -104,9 +104,9 @@
 
 ---
 
-## Tahap 10: Penyusunan Dokumen Laporan EdLink (PDF)
-* [ ] Susun berkas laporan sesuai template: `TugasProject_CyberSec_NamaLengkap_NIM.pdf`.
-* [ ] Masukkan URL aplikasi Vercel aktif, URL repositori Git, dan akun uji coba.
-* [ ] Lengkapi bab Potensi Skripsi, Penjelasan Arsitektur & Keamanan, serta Pelaporan Penggunaan AI Agent secara jujur.
-* [ ] Validasi checklist rubrik penilaian sebelum submit ke portal EdLink.
+## Tahap 10: Penyusunan Dokumen Spesifikasi & Laporan Keamanan
+* [ ] Susun berkas dokumentasi teknis: `KaryaGuard_Security_and_Architecture_Report.pdf`.
+* [ ] Masukkan URL aplikasi Vercel aktif, URL repositori Git, dan kredensial demonstrasi.
+* [ ] Lengkapi bab Analisis Keamanan Siber, Penjelasan Arsitektur Sistem, serta Transparansi AI Engineering.
+* [ ] Validasi checklist kepatuhan standar keamanan sebelum peluncuran resmi.
 

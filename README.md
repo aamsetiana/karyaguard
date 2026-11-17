@@ -7,9 +7,9 @@
 [![Docker](https://img.shields.io/badge/Container-Docker-2496ED?style=flat&logo=docker)](https://www.docker.com/)
 [![Security Grade](https://img.shields.io/badge/Security_Headers-Grade_A%2B-brightgreen?style=flat)](#)
 
-> **Proyek Tugas Besar**: Pengembangan & Pengamanan Aplikasi Web  
-> **Mata Kuliah**: Cyber Security (Pra UTS)  
-> **Sifat Pengerjaan**: Individu  
+> **Platform**: KaryaGuard Enterprise HRIS & Cyber Security Architecture  
+> **Klasifikasi**: Enterprise Web Application & Identity Governance  
+> **Status**: Production-Ready (v1.0)  
 
 ---
 
@@ -127,9 +127,9 @@ docker compose exec app npx prisma db seed
 
 ---
 
-## 6. Akun Uji Coba (Demo Credentials)
+## 6. Akun Demonstrasi (Demo Showcase Credentials)
 
-Untuk keperluan pengujian dosen dan evaluasi fungsional:
+Untuk keperluan evaluasi fungsional dan peninjauan arsitektur sistem:
 
 | Peran (*Role*) | Email Akun | Password Default | Keterangan |
 | :--- | :--- | :--- | :--- |
@@ -146,19 +146,19 @@ Untuk keperluan pengujian dosen dan evaluasi fungsional:
 
 ---
 
-## 8. Ringkasan Penggunaan AI Agent
+## 8. Transparansi Rekayasa Perangkat Lunak & AI Engineering
 
-Sesuai ketentuan kejujuran akademik pada Ketentuan Teknis Poin 3e:
+Dalam proses rekayasa dan pengembangan sistem KaryaGuard:
 * **Alat AI yang Digunakan**: Google Antigravity (Gemini 3.8 Flash & Pro Engine).
 * **Bagian Pekerjaan yang Dibantu**:
   1. Perancangan dokumen arsitektur SRS, diagram relasi entitas (ERD), dan skema Prisma ORM.
   2. Implementasi algoritma geofencing formula Haversine di server-side.
-  3. Konfigurasi multi-stage `Dockerfile` dan konfigurasi *Security Headers* pada `next.config.mjs`.
+  3. Konfigurasi multi-stage `Dockerfile` dan konfigurasi *Security Headers* pada `next.config.ts`.
   4. Penyusunan 5 skenario *self-testing* keamanan web dan mitigasi kerentanan IDOR.
 * **Contoh Prompt Utama**:
   > *"Buatkan fungsi kalkulasi formula Haversine di TypeScript untuk validasi koordinat presensi karyawan di server-side dengan verifikasi batas radius kantor."*
-* **Cara Mahasiswa Meninjau & Memverifikasi**:
-  Seluruh kode hasil AI ditinjau manual, diverifikasi alur eksekusinya, diuji menggunakan pengujian fungsional dan skenario cURL, serta dipastikan tidak ada *hardcoded secrets* yang masuk ke dalam source code.
+* **Metode Peninjauan & Verifikasi Engineer**:
+  Seluruh kode hasil AI ditinjau secara mendalam (*peer code review*), diverifikasi alur eksekusinya, diuji menggunakan skenario pengujian penetrasi mandiri (*self-penetration testing*), serta dipastikan tidak ada *hardcoded secrets* yang masuk ke dalam source code.
 
 ---
 

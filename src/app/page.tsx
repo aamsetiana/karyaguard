@@ -64,7 +64,7 @@ export default function HomePage() {
           {/* Top Pill */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Tugas Besar Pengembangan & Pengamanan Aplikasi Web</span>
+            <span>Next-Generation Enterprise Security & HRIS Platform</span>
           </div>
 
           {/* Heading */}
@@ -255,9 +255,9 @@ export default function HomePage() {
         <div className="rounded-2xl border border-white/[0.08] bg-[#0C121E] p-6 sm:p-8 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.06] pb-4">
             <div>
-              <h3 className="text-sm font-bold text-white">Akun Uji Coba Pengujian Dosen</h3>
+              <h3 className="text-sm font-bold text-white">Kredensial Akun Demonstrasi Sistem</h3>
               <p className="text-xs text-slate-400">
-                Gunakan kredensial berikut untuk menguji masing-masing tingkat peran pada halaman login:
+                Gunakan kredensial berikut untuk meninjau masing-masing tingkat hak akses (RBAC) pada sistem:
               </p>
             </div>
             <Link
@@ -294,7 +294,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-white/[0.08] py-8 text-center text-xs text-slate-500 max-w-7xl mx-auto px-4 w-full">
         <p>
-          KaryaGuard Enterprise HRIS • Tugas Besar Mata Kuliah Cyber Security • Next.js, Neon PostgreSQL & Docker
+          KaryaGuard Enterprise HRIS • Zero-Trust Workforce Management • Next.js, Neon PostgreSQL & Docker
         </p>
       </footer>
     </div>

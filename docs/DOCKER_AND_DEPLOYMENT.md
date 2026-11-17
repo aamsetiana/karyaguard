@@ -178,7 +178,7 @@ docker compose down
 
 ## 4. Panduan Publikasi ke Vercel
 
-Sesuai ketentuan tugas (FQDN publik ber-HTTPS aktif):
+Sesuai standar rilis publik (FQDN publik ber-HTTPS aktif):
 
 1. **Push Source Code ke Repositori GitHub/GitLab**:
    ```bash

@@ -1,7 +1,7 @@
 # Software Requirements Specification (SRS) & Arsitektur Sistem
 ## KaryaGuard — Secure HRIS, Geofenced Attendance & Payroll System
 
-> **Mata Kuliah**: Cyber Security  
+> **Domain**: Cyber Security & Enterprise Identity Governance  
 > **Target Platform**: Web Application (Next.js 14/15, Neon PostgreSQL, Vercel, Docker)  
 > **Status Dokumen**: Final Architecture Specification (v1.0)
 

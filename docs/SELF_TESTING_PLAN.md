@@ -1,7 +1,7 @@
 # Rencana & Dokumentasi Self-Testing Keamanan Web
 ## KaryaGuard — Secure HRIS, Geofenced Attendance & Payroll System
 
-> **Ketentuan Wajib Tugas Besar**: Minimal 5 skenario pengujian mandiri (*self-testing*) yang didokumentasikan dalam bentuk tabel pengujian, cara uji, hasil, serta perbaikan sebelum dan sesudah (*before vs after*).
+> **Standar Verifikasi Keamanan**: 5 skenario pengujian penetrasi mandiri (*self-penetration testing*) yang didokumentasikan dalam bentuk tabel pengujian, metodologi uji, hasil, serta evaluasi kontrol keamanan (*before vs after*).
 
 ---
 

@@ -151,7 +151,7 @@ export default function LoginPage() {
           {/* Demo Quick Fill Buttons */}
           <div className="pt-5 border-t border-white/[0.08] space-y-2.5">
             <p className="text-[11px] font-semibold text-slate-400 text-center uppercase tracking-wider">
-              Tombol Cepat Akun Demo (Uji Coba Dosen)
+              Tombol Cepat Akun Demonstrasi (Quick Role Fill)
             </p>
             <div className="grid grid-cols-3 gap-2">
               <button

@@ -1,7 +1,7 @@
 # Cetak Biru Keamanan Siber (Security Blueprint)
 ## KaryaGuard — Secure HRIS, Geofenced Attendance & Payroll System
 
-> **Tujuan**: Memenuhi dan melampaui ketentuan pengamanan aplikasi web tugas besar Cyber Security (Bobot Penilaian 20% + Nilai Tambah).
+> **Tujuan**: Memenuhi dan mengimplementasikan standar arsitektur keamanan siber enterprise (OWASP Top 10, Defense in Depth, Zero Trust Principles).
 
 ---
 
